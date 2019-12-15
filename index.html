@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>轮播图</title>
+    <script src="./js/animate.js">
+    </script>
+    <style>
+      .box{
+        width:1200px;
+        height:380px;
+        border:1px solid red;
+        margin:100px auto;
+        position:relative;
+        overflow:hidden;
+
+      }
+      .slider{
+        width:8400px;
+        position:absolute;
+        left:-1200px;
+      }
+      .slide{
+        width:1200px;
+        overflow:hidden;
+        float:left;
+      }
+      .box > span{
+        display:block;
+        width:30px;
+        height:50px;
+        text-align:center;
+        cursor:pointer;
+        top:175px;
+        line-height:50px;
+        background:rgb(255,0,0);
+        font-size:30px;
+        position:absolute;
+        opacity:0;
+      }
+      #left{
+        left:30px;
+      }
+      #right{
+        right:30px;
+      }
+      .nav{
+        position:absolute;
+        left:500px;
+        bottom:5px;
+      }
+      ul li{
+        list-style: none;
+      }
+      .nav>li{
+        float:left;
+        width:30px;
+        height:30px;
+        background:#ccc;
+        cursor:pointer;
+        margin:0 10px;
+        border-radius:50%;
+        text-align:center;
+      }
+      .nav .active{
+        background:red;
+      }
+      .top{
+        width:100%;
+        margin: 0;
+        padding: 0;
+        box-sizing:border-box;
+        background:#ccc;
+      }
+      body{
+        margin:0
+      }
+      .temp{
+        display:inline;
+        width:216px;
+        height:100px;
+        background:#ccc;
+        position:relative;
+        z-index:333 !important;
+      }
+      .temp img{
+        margin-left:300px;
+      }
+      .boxtop {
+        width: 1200px;;
+        margin: 0 auto;
+        display:inline;
+        overflow: hidden;
+      }
+      .animate {
+        position:relative;
+        padding-left: 20px;
+        font-size: 12px;
+        color: red;
+        display: inline-block;
+        white-space: nowrap;
+        animation: 10s wordsLoop linear infinite normal;
+        z-index:1;
+      }
+
+      @keyframes wordsLoop {
+          0% {
+              transform: translateX(100%);
+              -webkit-transform: translateX(100%);
+          }
+          100% {
+              transform: translateX(-100%);
+              -webkit-transform: translateX(-100%);
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top">
+      <div class="temp">
+        <img src="./images/a15.png">
+      </div>
+
+      <div class="boxtop">
+        <p class="animate">
+            [温馨提示]：最近有不少不法分子在网上骗子，请大家注意
+        </p>
+    </div>
+    </div>
+    <div class="box" id="box">
+      <div class="slider" id="slider">
+        <div class="slide">
+          <img src="./images/b5.png" alt="">
+        </div>
+        <div class="slide">
+          <img src="./images/b1.png" alt="">
+        </div>
+        <div class="slide">
+          <img src="./images/b2.png" alt="">
+        </div>
+        <div class="slide">
+          <img src="./images/b3.png" alt="">
+        </div>
+        <div class="slide">
+          <img src="./images/b4.png" alt="">
+        </div>
+        <div class="slide">
+          <img src="./images/b5.png" alt="">
+        </div>
+        <div class="slide">
+          <img src="./images/b1.png" alt="">
+        </div>
+      </div>
+      <span id="left"><</span>
+      <span id="right">></span>
+      <ul class="nav" id="nav">
+        <li class="active">1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+      </ul>
+    </div>
+
+
+  </body>
+  <script type="text/javascript">
+    window.onload = function(){
+      console.log("onload")
+      var box = document.getElementById('box')
+      var oNavlist = document.getElementById('nav').children
+      var slider = document.getElementById('slider')
+      var left = document.getElementById('left')
+      var right = document.getElementById('right')
+      var index = 1
+
+      var isMoving = false
+      function next(){
+        console.log(isMoving)
+        if(!isMoving){
+          isMoving = true
+          index++
+          navChange()
+          animate(slider,{left:-1200*index},function(){
+            if(index === 6){
+              slider.style.left = "-1200px"
+              index = 1
+            }
+            isMoving = false
+          })
+          console.log(index)
+        }
+      }
+      function prev(){
+        if(!isMoving){
+          isMoving = true
+          index--
+          navChange()
+          animate(slider,{left:-1200*index},function(){
+            if(index === 0){
+              slider.style.left = "-6000px"
+              index = 5
+            }
+            isMoving = false
+          })
+          console.log(index)
+        }
+      }
+      var timer = setInterval(next,3000)
+      box.onmouseover = function(){
+        animate(left,{opacity:50})
+        animate(right,{opacity:50})
+        clearInterval(timer)
+      }
+      box.onmouseout = function(){
+        animate(left,{opacity:0})
+        animate(right,{opacity:0})
+        timer = setInterval(next,3000)
+      }
+
+      right.onclick = ()=>{index = index===6?1:index++;next()}
+      left.onclick = ()=>{index = index===0?5:index++;prev()}
+
+      console.log(oNavlist)
+      for(var i=0;i<oNavlist.length;i++){
+        oNavlist[i].idx = i
+        oNavlist[i].onclick = function(){
+          console.log(this.idx)
+          index = this.idx +1
+          navChange()
+          animate(slider,{left:-1200*index})
+        }
+      }
+
+      function navChange(){
+        let sub=index==6?1:index==0?5:index
+        for(var i=0;i<oNavlist.length;i++){
+          let sup=i==5?1:i
+          oNavlist[sup].className = "";
+        }
+        oNavlist[sub-1].className = 'active'
+      }
+    }
+  </script>
+</html>
